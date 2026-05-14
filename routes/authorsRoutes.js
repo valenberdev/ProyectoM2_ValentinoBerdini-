@@ -11,45 +11,65 @@ const {
 
 router.get('/', (req, res) => {
     const authors = getAllAuthors();
-    res.json(authors);
+    try {
+        res.json(authors);
+    } catch (error) {
+        res.status(500).json({ message: 'No se pudieron obtener los autores' });
+    }
 });
 
 router.get('/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const author = getAuthorById(id);
+   try {     
     if (author) {
-        res.json(author);
+            res.json(author);
     } else {
-        res.status(404).json({ message: 'Author not found' });
+            res.status(404).json({ message: 'Autor no encontrado' });
+        }
+} catch (error) {
+        res.status(500).json({ message: 'No se pudo obtener el autor' });
     }
 });
 
 router.post('/', (req, res) => {
     const newAuthor = create(req.body);
-    if (newAuthor) {
-        res.status(201).json(newAuthor);
+    try {
+    if (!req.body.name || !req.body.email) {
+        res.status(400).json({ message: 'Nombre y email son requeridos' });
     } else {
-        res.status(400).json({ message: 'Failed to create author' });
+        res.status(201).json(newAuthor);
+    }
+} catch (error) {
+        res.status(500).json({ message: 'No se pudo crear el autor' });
     }
 });
 
 router.put('/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const updatedAuthor = update(id, req.body);
+    try {
     if (updatedAuthor) {
         res.json(updatedAuthor);
     } else {
-        res.status(404).json({ message: 'Author not found' });
+        res.status(404).json({ message: 'Autor no encontrado' });
+    }
+} catch (error) {
+        res.status(500).json({ message: 'No se pudo actualizar el autor' });
     }
 });
 
 router.delete('/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const deletedAuthor = remove(id);
-    if (deletedAuthor) {
-        res.json({ message: 'Author deleted successfully' });
-    } else {
-        res.status(404).json({ message: 'Author not found' });
+    try {
+        if (deletedAuthor) {
+            res.status(204).json({ message: 'Autor eliminado correctamente' });
+        } else {
+            res.status(404).json({ message: 'Autor no encontrado' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'No se pudo eliminar el autor' });
     }
 });
 
