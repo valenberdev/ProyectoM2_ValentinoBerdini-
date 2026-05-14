@@ -33,15 +33,11 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const newAuthor = create(req.body);
-    try {
-    if (!req.body.name || !req.body.email) {
+     if (!req.body.name || !req.body.email) {
         res.status(400).json({ message: 'Nombre y email son requeridos' });
     } else {
+        const newAuthor = create(req.body);
         res.status(201).json(newAuthor);
-    }
-} catch (error) {
-        res.status(500).json({ message: 'No se pudo crear el autor' });
     }
 });
 
@@ -64,7 +60,7 @@ router.delete('/:id', (req, res) => {
     const deletedAuthor = remove(id);
     try {
         if (deletedAuthor) {
-            res.status(204).json({ message: 'Autor eliminado correctamente' });
+            res.status(204).send();
         } else {
             res.status(404).json({ message: 'Autor no encontrado' });
         }

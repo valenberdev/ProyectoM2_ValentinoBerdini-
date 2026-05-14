@@ -43,9 +43,9 @@ router.get('/author/:author_id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-    const newPost = create(req.body);
     try {
         if (req.body.title && req.body.content && req.body.author_id) {
+            const newPost = create(req.body);
             res.status(201).json(newPost);
         } else {
             res.status(400).json({ message: 'Título, contenido y ID de autor son requeridos' });
@@ -74,7 +74,7 @@ router.delete('/:id', (req, res) => {
     const removedPost = remove(id);
     try {
         if (removedPost) {
-            res.status(204).json({ message: 'Post eliminado correctamente' });
+            res.status(204).send();
         } else {    
             res.status(404).json({ message: 'Post no encontrado' });
         }
