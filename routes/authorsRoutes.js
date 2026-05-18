@@ -38,8 +38,11 @@ router.post('/', validateAuthor, async (req, res) => {
         const newAuthor = await create(req.body);
         res.status(201).json(newAuthor);
     } catch (error) {
-        res.status(500).json({ message: 'No se pudo crear el autor' });
+    if (error.code === '23505') {
+        return res.status(409).json({ message: 'El email ya está registrado' });
     }
+    res.status(500).json({ message: '...' });
+}    
 });
 
 router.put('/:id', validateAuthor, async (req, res) => {
@@ -51,9 +54,12 @@ router.put('/:id', validateAuthor, async (req, res) => {
     } else {
         res.status(404).json({ message: 'Autor no encontrado' });
     }
-} catch (error) {
-        res.status(500).json({ message: 'No se pudo actualizar el autor' });
+    } catch (error) {
+    if (error.code === '23505') {
+        return res.status(409).json({ message: 'El email ya está registrado' });
     }
+    res.status(500).json({ message: '...' });
+}
 });
 
 router.delete('/:id', async (req, res) => {
