@@ -4,13 +4,14 @@ const router = express.Router();
 const {
     getAllPosts,
     getPostById,
+    getPostsByAuthor,
     create,
     update,
     remove
 } = require('../services/postsService');
 
-router.get('/', (req, res) => {
-    const posts = getAllPosts();
+router.get('/',  async (req, res) => {
+    const posts = await getAllPosts();
     try {
         res.json(posts);
     } catch (error) {
@@ -18,10 +19,10 @@ router.get('/', (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
-    const post = getPostById(id);
     try {
+        const post = await getPostById(id);
         if (post) {
             res.json(post);
         } else {
@@ -32,20 +33,20 @@ router.get('/:id', (req, res) => {
     }
 });
 
-router.get('/author/:author_id', (req, res) => {
-    const author_id = parseInt(req.params.author_id);
-    const posts = getAllPosts().filter(post => post.author_id === author_id);
+router.get('/author/:authorId', async (req, res) => {
+    const authorId = parseInt(req.params.authorId);
     try {
+        const posts = await getPostsByAuthor(authorId);
         res.json(posts);
     } catch (error) {
         res.status(500).json({ message: 'No se pudieron obtener los posts' });
     }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     try {
         if (req.body.title && req.body.content && req.body.author_id) {
-            const newPost = create(req.body);
+            const newPost = await create(req.body);
             res.status(201).json(newPost);
         } else {
             res.status(400).json({ message: 'Título, contenido y ID de autor son requeridos' });
@@ -55,9 +56,9 @@ router.post('/', (req, res) => {
     }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
-    const updatedPost = update(id, req.body);
+    const updatedPost = await update(id, req.body);
     try {
         if (updatedPost) {
             res.json(updatedPost);
@@ -69,9 +70,9 @@ router.put('/:id', (req, res) => {
     }
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
-    const removedPost = remove(id);
+    const removedPost = await remove(id);
     try {
         if (removedPost) {
             res.status(204).send();
@@ -82,5 +83,6 @@ router.delete('/:id', (req, res) => {
         res.status(500).json({ message: 'No se pudo eliminar el post' });
     }
 });
+
 
 module.exports = router;

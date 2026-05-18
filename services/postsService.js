@@ -1,3 +1,5 @@
+const pool = require('../db/pool');
+
 let posts = [
   {
     id: 1,
@@ -60,38 +62,44 @@ let posts = [
   },
 ];
 
-const getAllPosts = () => {
-  return posts;
+const getAllPosts = async () => {
+  const result = await pool.query('SELECT * FROM posts');
+  return result.rows;
 };
 
-const getPostById = (id) => {
-  return posts.find(post => post.id === id);
+const getPostById = async (id) => {
+  const result = await pool.query('SELECT * FROM posts WHERE id = $1', [id]);
+  return result.rows[0];
 };
 
-const create = (data) => {
-  const id = Date.now();
-
-  const newPost = {
-    id,
-    ...data
-  };
-
-  posts.push(newPost);
-
-  return newPost;
+const getPostsByAuthor = async (authorId) => {
+    const result = await pool.query('SELECT * FROM posts WHERE author_id = $1', [authorId]);
+    return result.rows;
 };
 
-const update = (id, data) => {
-  const index = posts.findIndex(post => post.id === id);
-  if (index !== -1) {
-    posts[index] = { ...posts[index], ...data, id };
-    return posts[index];
-  }
-  return null;
+
+const create = async (data) => {
+  const result = await pool.query(
+    'INSERT INTO posts (title, content, author_id, published) VALUES ($1, $2, $3, $4) RETURNING *',
+    [data.title, data.content, data.author_id, data.published]
+  );
+  return result.rows[0];
 };
 
-const remove = (id) => {
-  const initialLength = posts.length;
-  posts = posts.filter(post => post.id !== id);
-  return posts.length < initialLength;
+  
+const update = async (id, data) => {
+  const result = await pool.query(
+    'UPDATE posts SET title = $1, content = $2, author_id = $3, published = $4 WHERE id = $5 RETURNING *',
+    [data.title, data.content, data.author_id, data.published, id]
+  );
+  return result.rows[0] || null;
 };
+
+
+const remove = async (id) => {
+  const result = await pool.query('DELETE FROM posts WHERE id = $1', [id]);
+  return result.rowCount > 0;
+};
+
+
+module.exports = { getAllPosts, getPostById, getPostsByAuthor, create, update, remove };

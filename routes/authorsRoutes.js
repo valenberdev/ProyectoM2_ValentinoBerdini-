@@ -9,8 +9,8 @@ const {
     remove
 } = require('../services/authorsService');
 
-router.get('/', (req, res) => {
-    const authors = getAllAuthors();
+router.get('/', async (req, res) => {
+    const authors = await getAllAuthors();
     try {
         res.json(authors);
     } catch (error) {
@@ -18,9 +18,9 @@ router.get('/', (req, res) => {
     }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
-    const author = getAuthorById(id);
+    const author = await getAuthorById(id);
    try {     
     if (author) {
             res.json(author);
@@ -32,18 +32,18 @@ router.get('/:id', (req, res) => {
     }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
      if (!req.body.name || !req.body.email) {
         res.status(400).json({ message: 'Nombre y email son requeridos' });
     } else {
-        const newAuthor = create(req.body);
+        const newAuthor = await create(req.body);
         res.status(201).json(newAuthor);
     }
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
-    const updatedAuthor = update(id, req.body);
+    const updatedAuthor = await update(id, req.body);
     try {
     if (updatedAuthor) {
         res.json(updatedAuthor);
@@ -55,9 +55,9 @@ router.put('/:id', (req, res) => {
     }
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     const id = parseInt(req.params.id);
-    const deletedAuthor = remove(id);
+    const deletedAuthor = await remove(id);
     try {
         if (deletedAuthor) {
             res.status(204).send();
