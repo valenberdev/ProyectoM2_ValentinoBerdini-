@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validatePost } = require('../middlewares/validators');
 
 const {
     getAllPosts,
@@ -10,7 +11,7 @@ const {
     remove
 } = require('../services/postsService');
 
-router.get('/',  async (req, res) => {
+router.get('/', async (req, res) => {
     const posts = await getAllPosts();
     try {
         res.json(posts);
@@ -43,20 +44,17 @@ router.get('/author/:authorId', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', validatePost, async (req, res) => {
     try {
-        if (req.body.title && req.body.content && req.body.author_id) {
-            const newPost = await create(req.body);
-            res.status(201).json(newPost);
-        } else {
-            res.status(400).json({ message: 'Título, contenido y ID de autor son requeridos' });
-        }
+        const newPost = await create(req.body);
+        res.status(201).json(newPost);
+        
     } catch (error) {
         res.status(500).json({ message: 'No se pudo crear el post' });
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validatePost, async (req, res) => {
     const id = parseInt(req.params.id);
     const updatedPost = await update(id, req.body);
     try {

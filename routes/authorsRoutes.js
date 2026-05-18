@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { validateAuthor } = require('../middlewares/validators');
 
 const {
     getAllAuthors,
@@ -32,16 +33,16 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
-     if (!req.body.name || !req.body.email) {
-        res.status(400).json({ message: 'Nombre y email son requeridos' });
-    } else {
+router.post('/', validateAuthor, async (req, res) => {
+     try {
         const newAuthor = await create(req.body);
         res.status(201).json(newAuthor);
+    } catch (error) {
+        res.status(500).json({ message: 'No se pudo crear el autor' });
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateAuthor, async (req, res) => {
     const id = parseInt(req.params.id);
     const updatedAuthor = await update(id, req.body);
     try {
