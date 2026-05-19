@@ -64,21 +64,32 @@ API REST para gestionar autores y publicaciones, desarrollada con Node.js, Expre
 npm test
 ```
 
+Los tests cubren: creación de autor, obtención por ID, email duplicado (409), recurso inexistente (404), creación de post.
+
 ## Documentación OpenAPI
 
-El archivo `docs/openapi.yaml` contiene la especificación completa. Podés visualizarlo en [Swagger Editor](https://editor.swagger.io/) o usando la extensión Swagger Viewer en VS Code.
+- **Archivo:** `docs/openapi.yaml`
+- **Ver online:** [Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/valenberdev/ProyectoM2_ValentinoBerdini-/main/docs/openapi.yaml)
+- **Local:** Instalar extensión Swagger Viewer en VS Code y abrir `docs/openapi.yaml`
 
 ## Deploy en Railway
 
-1. Crear cuenta en [Railway](https://railway.app/)
-2. Conectar repositorio de GitHub
-3. Crear un nuevo proyecto desde el repositorio
-4. Agregar un servicio de PostgreSQL
-5. Configurar variables de entorno en Railway:
-   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` (los del servicio PostgreSQL de Railway)
-   - `PORT` (Railway lo asigna automáticamente)
-6. Iniciar el servicio
-7. La URL pública se genera automáticamente
+- **URL pública:** https://proyectom2valentinoberdini-production.up.railway.app
+
+### Pasos para deployar
+
+1. Crear cuenta en [Railway](https://railway.app/) con GitHub
+2. Crear proyecto → **Deploy from GitHub repo** → seleccionar el repositorio
+3. Agregar PostgreSQL: **New** → **Database** → **Add PostgreSQL**
+4. Ejecutar scripts SQL desde la terminal (copiar el comando psql desde Railway):
+   ```bash
+   PGPASSWORD=... psql -h host -U postgres -p puerto -d railway -f db/setup.sql
+   PGPASSWORD=... psql -h host -U postgres -p puerto -d railway -f db/seed.sql
+   ```
+5. Configurar variables de entorno en la app (no en PostgreSQL):
+   - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` (valores del servicio PostgreSQL)
+   - No agregar `PORT` (Railway lo asigna automáticamente)
+6. Ir a **Settings → Networking → Generate Domain** para obtener la URL pública
 
 ## Uso de IA
 
