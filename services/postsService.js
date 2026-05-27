@@ -19,7 +19,7 @@ const getPostsByAuthor = async (authorId) => {
 const create = async (data) => {
   const result = await pool.query(
     'INSERT INTO posts (title, content, author_id, published) VALUES ($1, $2, $3, $4) RETURNING *',
-    [data.title, data.content, data.author_id, data.published]
+    [data.title, data.content, data.author_id, data.published ?? false]
   );
   return result.rows[0];
 };

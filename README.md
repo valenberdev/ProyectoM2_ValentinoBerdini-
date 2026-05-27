@@ -23,7 +23,8 @@ API REST para gestionar autores y publicaciones, desarrollada con Node.js, Expre
 
 3. Crear base de datos y ejecutar scripts SQL:
    ```bash
-   psql -U tu_usuario -f db/setup.sql
+   psql -U tu_usuario -f db/create_db.sql
+   psql -U tu_usuario -d miniblog_api -f db/setup.sql
    psql -U tu_usuario -d miniblog_api -f db/seed.sql
    ```
 
@@ -57,6 +58,9 @@ API REST para gestionar autores y publicaciones, desarrollada con Node.js, Expre
 | POST   | /posts                  | Crear post               |
 | PUT    | /posts/:id              | Actualizar post          |
 | DELETE | /posts/:id              | Eliminar post            |
+| GET    | /posts/:id/comments     | Listar comentarios de post |
+| POST   | /posts/:id/comments     | Crear comentario en post |
+| GET    | /health                 | Estado de la API         |
 
 ## Tests
 
@@ -64,7 +68,7 @@ API REST para gestionar autores y publicaciones, desarrollada con Node.js, Expre
 npm test
 ```
 
-Los tests cubren: creación de autor, obtención por ID, email duplicado (409), recurso inexistente (404), creación de post.
+Los tests cubren: creación y eliminación de autor, email duplicado (409), validación de IDs inválidos (400), creación de post, posts por autor y comentarios.
 
 ## Documentación OpenAPI
 

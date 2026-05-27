@@ -5,6 +5,20 @@ info:
   description: API REST para gestionar autores y posts
 
 paths:
+  /health:
+    get:
+      summary: Verifica estado de la API
+      responses:
+        '200':
+          description: API operativa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
   /authors:
     get:
       summary: Lista todos los autores
@@ -41,6 +55,10 @@ paths:
                 $ref: '#/components/schemas/Author'
         '400':
           description: Validación fallida
+        '409':
+          description: Email duplicado
+        '500':
+          description: Error interno del servidor
 
   /authors/{id}:
     get:
@@ -58,8 +76,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Author'
+        '400':
+          description: ID inválido
         '404':
           description: Autor no encontrado
+        '500':
+          description: Error interno del servidor
     put:
       summary: Actualiza un autor
       parameters:
@@ -88,8 +110,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Author'
+        '400':
+          description: Validación o ID inválido
+        '409':
+          description: Email duplicado
         '404':
           description: Autor no encontrado
+        '500':
+          description: Error interno del servidor
     delete:
       summary: Elimina un autor
       parameters:
@@ -101,8 +129,12 @@ paths:
       responses:
         '204':
           description: Autor eliminado
+        '400':
+          description: ID inválido
         '404':
           description: Autor no encontrado
+        '500':
+          description: Error interno del servidor
 
   /posts:
     get:
@@ -142,6 +174,8 @@ paths:
                 $ref: '#/components/schemas/Post'
         '400':
           description: Validación fallida
+        '500':
+          description: Error interno del servidor
 
   /posts/{id}:
     get:
@@ -159,8 +193,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
+        '400':
+          description: ID inválido
         '404':
           description: Post no encontrado
+        '500':
+          description: Error interno del servidor
     put:
       summary: Actualiza un post
       parameters:
@@ -191,6 +229,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Post'
+        '400':
+          description: Validación o ID inválido
+        '404':
+          description: Post no encontrado
+        '500':
+          description: Error interno del servidor
     delete:
       summary: Elimina un post
       parameters:
@@ -202,8 +246,12 @@ paths:
       responses:
         '204':
           description: Post eliminado
+        '400':
+          description: ID inválido
         '404':
           description: Post no encontrado
+        '500':
+          description: Error interno del servidor
 
   /posts/author/{authorId}:
     get:
@@ -223,6 +271,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Post'
+        '400':
+          description: ID inválido
+        '500':
+          description: Error interno del servidor
 
   /posts/{id}/comments:
     get:
@@ -242,6 +294,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Comment'
+        '400':
+          description: ID inválido
+        '500':
+          description: Error interno del servidor
     post:
       summary: Crea un comentario en un post
       parameters:
@@ -270,6 +326,8 @@ paths:
                 $ref: '#/components/schemas/Comment'
         '400':
           description: Validación fallida
+        '500':
+          description: Error interno del servidor
 
 components:
   schemas:
