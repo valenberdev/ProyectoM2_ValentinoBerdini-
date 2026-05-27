@@ -73,6 +73,23 @@ describe("Posts API", () => {
     expect(res.body.title).toBe("Test Post");
   });
 
+  test("GET /posts - lista todos los posts", async () => {
+    const res = await request(app).get("/posts");
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+  });
+
+  test("GET /posts/:id - obtiene un post por su ID", async () => {
+    const res = await request(app).get(`/posts/${postId}`);
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(postId);
+  });
+
+  test("GET /posts/:id - devuelve 404 si no existe", async () => {
+    const res = await request(app).get("/posts/99999");
+    expect(res.status).toBe(404);
+  });
+
   test("GET /posts/author/:authorId - lista posts por autor", async () => {
     const res = await request(app).get(`/posts/author/${authorId}`);
     expect(res.status).toBe(200);
@@ -114,6 +131,46 @@ describe("Posts API", () => {
   test("GET /posts/:id/comments - ID inválido da 400", async () => {
     const res = await request(app).get("/posts/abc/comments");
     expect(res.status).toBe(400);
+  });
+
+  test("PUT /posts/:id - actualiza un post existente", async () => {
+    const res = await request(app).put(`/posts/${postId}`).send({
+      title: "Test Post Updated",
+      content: "Updated content",
+      author_id: authorId,
+      published: true,
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe("Test Post Updated");
+    expect(res.body.published).toBe(true);
+  });
+
+  test("PUT /posts/:id - devuelve 404 si no existe", async () => {
+    const res = await request(app).put("/posts/99999").send({
+      title: "No Existe",
+      content: "No Existe",
+      author_id: authorId,
+      published: false,
+    });
+    expect(res.status).toBe(404);
+  });
+
+  test("DELETE /posts/:id - devuelve 404 si no existe", async () => {
+    const res = await request(app).delete("/posts/99999");
+    expect(res.status).toBe(404);
+  });
+
+  test("DELETE /posts/:id - elimina un post existente", async () => {
+    const createRes = await request(app).post("/posts").send({
+      title: "Post to delete",
+      content: "Post to delete content",
+      author_id: authorId,
+      published: false,
+    });
+    expect(createRes.status).toBe(201);
+
+    const deleteRes = await request(app).delete(`/posts/${createRes.body.id}`);
+    expect(deleteRes.status).toBe(204);
   });
 });
 
