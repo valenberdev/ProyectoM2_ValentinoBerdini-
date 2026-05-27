@@ -1,0 +1,1 @@
+CREATE DATABASE miniblog_api;

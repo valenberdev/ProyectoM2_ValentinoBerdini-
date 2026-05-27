@@ -1,5 +1,3 @@
-CREATE DATABASE miniblog_api;
-
 
 CREATE TABLE authors (
     id SERIAL PRIMARY KEY,

@@ -19,4 +19,11 @@ const validateIdParam = (paramName) => (req, res, next) => {
   }
   next();
 };
-module.exports = {validateAuthor,validatePost,validateIdParam};
+
+const validateComment = (req, res, next) => {
+  if (!req.body.content || !req.body.author_id) {
+    return res.status(400).json({ message: 'Contenido y ID de autor son requeridos' });
+  }
+  next();
+};
+module.exports = {validateAuthor,validatePost,validateIdParam,validateComment};
