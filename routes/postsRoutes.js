@@ -11,26 +11,26 @@ const {
   remove,
 } = require("../services/postsService");
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const posts = await getAllPosts();
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: "No se pudieron obtener los posts" });
+    next(error);
   }
 });
 
-router.get("/author/:authorId", async (req, res) => {
+router.get("/author/:authorId", async (req, res, next) => {
   try {
     const authorId = parseInt(req.params.authorId);
     const posts = await getPostsByAuthor(authorId);
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: "No se pudieron obtener los posts" });
+    next(error);
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const post = await getPostById(id);
@@ -40,20 +40,20 @@ router.get("/:id", async (req, res) => {
       res.status(404).json({ message: "Post no encontrado" });
     }
   } catch (error) {
-    res.status(500).json({ message: "No se pudo obtener el post" });
+    next(error);
   }
 });
 
-router.post("/", validatePost, async (req, res) => {
+router.post("/", validatePost, async (req, res, next) => {
   try {
     const newPost = await create(req.body);
     res.status(201).json(newPost);
   } catch (error) {
-    res.status(500).json({ message: "No se pudo crear el post" });
+    next(error);
   }
 });
 
-router.put("/:id", validatePost, async (req, res) => {
+router.put("/:id", validatePost, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const updatedPost = await update(id, req.body);
@@ -63,11 +63,11 @@ router.put("/:id", validatePost, async (req, res) => {
       res.status(404).json({ message: "Post no encontrado" });
     }
   } catch (error) {
-    res.status(500).json({ message: "No se pudo actualizar el post" });
+    next(error);
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const id = parseInt(req.params.id);
     const removedPost = await remove(id);
@@ -77,7 +77,7 @@ router.delete("/:id", async (req, res) => {
       res.status(404).json({ message: "Post no encontrado" });
     }
   } catch (error) {
-    res.status(500).json({ message: "No se pudo eliminar el post" });
+    next(error);
   }
 });
 
