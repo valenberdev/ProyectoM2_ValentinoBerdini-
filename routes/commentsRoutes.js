@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const { getCommentsByPost, create } = require('../services/commentsService');
+const { getCommentsByPost, create, validateIdParam } = require('../services/commentsService');
 
-router.get('/:id/comments', async (req, res, next) => {
-    const postId = parseInt(req.params.id);
+router.get('/:id/comments', validateIdParam("id"), async (req, res, next) => {
+    const postId = parseInt(req.params.id, 10);
     try {
         const comments = await getCommentsByPost(postId);
         res.json(comments);
@@ -12,8 +12,8 @@ router.get('/:id/comments', async (req, res, next) => {
     }
 });
 
-router.post('/:id/comments', async (req, res, next) => {
-    const postId = parseInt(req.params.id);
+router.post('/:id/comments', validateIdParam("id"), async (req, res, next) => {
+    const postId = parseInt(req.params.id, 10);
     if (!req.body.content || !req.body.author_id) {
         return res.status(400).json({ message: 'Contenido y ID de autor son requeridos' });
     }

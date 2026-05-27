@@ -12,4 +12,11 @@ const validatePost = (req, res, next) => {
     next();
 };
 
-module.exports = {validateAuthor,validatePost};
+const validateIdParam = (paramName) => (req, res, next) => {
+  const value = parseInt(req.params[paramName], 10);
+  if (Number.isNaN(value)) {
+    return res.status(400).json({ message: 'El ID debe ser un número válido' });
+  }
+  next();
+};
+module.exports = {validateAuthor,validatePost,validateIdParam};

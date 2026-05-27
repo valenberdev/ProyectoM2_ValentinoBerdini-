@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { validatePost } = require("../middlewares/validators");
+const { validatePost, validateIdParam } = require("../middlewares/validators");
 
 const {
   getAllPosts,
@@ -20,9 +20,9 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/author/:authorId", async (req, res, next) => {
+router.get("/author/:authorId", validateIdParam("authorId"), async (req, res, next) => {
   try {
-    const authorId = parseInt(req.params.authorId);
+    const authorId = parseInt(req.params.authorId, 10);
     const posts = await getPostsByAuthor(authorId);
     res.json(posts);
   } catch (error) {
@@ -30,9 +30,9 @@ router.get("/author/:authorId", async (req, res, next) => {
   }
 });
 
-router.get("/:id", async (req, res, next) => {
+router.get("/:id", validateIdParam("id"), async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
     const post = await getPostById(id);
     if (post) {
       res.json(post);
@@ -53,9 +53,9 @@ router.post("/", validatePost, async (req, res, next) => {
   }
 });
 
-router.put("/:id", validatePost, async (req, res, next) => {
+router.put("/:id", validatePost, validateIdParam("id"), async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
     const updatedPost = await update(id, req.body);
     if (updatedPost) {
       res.json(updatedPost);
@@ -67,9 +67,9 @@ router.put("/:id", validatePost, async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", validateIdParam("id"), async (req, res, next) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(req.params.id, 10);
     const removedPost = await remove(id);
     if (removedPost) {
       res.status(204).send();
