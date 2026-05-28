@@ -70,6 +70,12 @@ npm test
 
 Los tests cubren: creación y eliminación de autor, email duplicado (409), validación de IDs inválidos (400), creación de post, posts por autor y comentarios.
 
+También incluyen casos de borde de validación:
+- IDs con caracteres mixtos (ej: `12abc`) -> `400`
+- `name`, `title` y `content` vacíos o con solo espacios -> `400`
+- `email` inválido -> `400`
+- `author_id` no entero positivo -> `400`
+
 ## Documentación OpenAPI
 
 - **Archivo:** `docs/openapi.yaml`

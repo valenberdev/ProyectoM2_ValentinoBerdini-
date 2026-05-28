@@ -26,13 +26,22 @@ describe("errorHandler (unit)", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "El email ya está registrado" });
   });
 
-  test("mapea 23503 a 400", () => {
-    const err = { code: "23503", stack: "stack" };
+  test("mapea 23503 author_id a 404", () => {
+    const err = { code: "23503", detail: "Key (author_id)=(99) is not present in table \"authors\".", stack: "stack" };
 
     errorHandler(err, req, res, next);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "El recurso referenciado no existe" });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "El autor referenciado no existe" });
+  });
+
+  test("mapea 23503 post_id a 404", () => {
+    const err = { code: "23503", detail: "Key (post_id)=(99) is not present in table \"posts\".", stack: "stack" };
+
+    errorHandler(err, req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ message: "El post referenciado no existe" });
   });
 
   test("error genérico devuelve 500", () => {

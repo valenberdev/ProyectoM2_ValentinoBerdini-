@@ -19,6 +19,22 @@ describe("Authors API", () => {
     expect(res.status).toBe(409);
   });
 
+  test("POST /authors - email inválido da 400", async () => {
+    const res = await request(app).post("/authors").send({
+      name: "Autor inválido",
+      email: "correo-invalido",
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test("POST /authors - nombre vacío da 400", async () => {
+    const res = await request(app).post("/authors").send({
+      name: "   ",
+      email: `blank-${Date.now()}@example.com`,
+    });
+    expect(res.status).toBe(400);
+  });
+
   test("GET /authors/:id - obtiene un autor por su ID", async () => {
     const res = await request(app).get(`/authors/${authorId}`);
     expect(res.status).toBe(200);
@@ -27,6 +43,11 @@ describe("Authors API", () => {
 
   test("GET /authors/:id - ID inválido da 400", async () => {
     const res = await request(app).get("/authors/abc");
+    expect(res.status).toBe(400);
+  });
+
+  test("GET /authors/:id - ID con caracteres mixtos da 400", async () => {
+    const res = await request(app).get("/authors/12abc");
     expect(res.status).toBe(400);
   });
 
@@ -101,8 +122,33 @@ describe("Posts API", () => {
     expect(res.status).toBe(400);
   });
 
+  test("POST /posts - título vacío da 400", async () => {
+    const res = await request(app).post("/posts").send({
+      title: "   ",
+      content: "Contenido válido",
+      author_id: authorId,
+      published: false,
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test("POST /posts - author_id inválido da 400", async () => {
+    const res = await request(app).post("/posts").send({
+      title: "Post inválido",
+      content: "Contenido válido",
+      author_id: "1",
+      published: false,
+    });
+    expect(res.status).toBe(400);
+  });
+
   test("GET /posts/:id - ID inválido da 400", async () => {
     const res = await request(app).get("/posts/abc");
+    expect(res.status).toBe(400);
+  });
+
+  test("GET /posts/:id - ID con caracteres mixtos da 400", async () => {
+    const res = await request(app).get("/posts/45abc");
     expect(res.status).toBe(400);
   });
 
@@ -124,6 +170,14 @@ describe("Posts API", () => {
   test("POST /posts/:id/comments - body inválido da 400", async () => {
     const res = await request(app).post(`/posts/${postId}/comments`).send({
       content: "Falta author_id",
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test("POST /posts/:id/comments - contenido vacío da 400", async () => {
+    const res = await request(app).post(`/posts/${postId}/comments`).send({
+      author_id: authorId,
+      content: "  ",
     });
     expect(res.status).toBe(400);
   });
